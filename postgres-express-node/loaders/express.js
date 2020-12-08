@@ -1,4 +1,5 @@
 const express = require("express");
+const jwt = require("express-jwt")
 const cors = require("cors");
 const config = require("../config");
 const routes = require("../api");
@@ -13,11 +14,17 @@ module.exports = ({ app, HttpLogger: logger }) => {
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
+  app.use(
+    jwt({
+      algorithms: config.jwt.algorithms,
+      secret: config.jwt.secret,
+    }).unless(config.jwt.exclude)
+  );
 
   //---------------------------
   // LOAD/MOUNT API ROUTES
   // (path prefix e.g. /api)
-  //---------------------------
+  //--------------------------- 
   app.use(config.api.prefix, routes());
 
   //---------------------------
